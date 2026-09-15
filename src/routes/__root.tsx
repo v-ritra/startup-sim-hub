@@ -77,7 +77,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "STRATA — AI Market Validation Console" },
+      { title: "LaunchPad AI — Validate Your Business Idea" },
       {
         name: "description",
         content: "Stress-test business ideas with AI simulations before spending real money.",
