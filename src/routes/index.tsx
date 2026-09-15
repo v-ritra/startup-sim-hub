@@ -33,22 +33,22 @@ const SAMPLE: Report = {
   moat: 41,
   personas: [
     {
-      name: "\u201cFreelance\u201d Mara, 34",
+      name: "“Freelance” Mara, 34",
       archetype: "Solo designer",
       sentiment: 0.82,
-      quote: "I\u2019d pay, but only if it drafts the proposal itself \u2014 not just stores it.",
+      quote: "I’d pay, but only if it drafts the proposal itself — not just stores it.",
     },
     {
-      name: "\u201cStudio Lead\u201d Dan, 41",
+      name: "“Studio Lead” Dan, 41",
       archetype: "Agency owner",
       sentiment: 0.31,
-      quote: "Per-seat is fine for a solo act, but I won\u2019t buy it for a 12-person studio.",
+      quote: "Per-seat is fine for a solo act, but I won’t buy it for a 12-person studio.",
     },
     {
-      name: "\u201cSwitcher\u201d Rin, 29",
+      name: "“Switcher” Rin, 29",
       archetype: "Tool migrator",
       sentiment: -0.14,
-      quote: "My current tool already does this. I\u2019d need a reason to migrate my files.",
+      quote: "My current tool already does this. I’d need a reason to migrate my files.",
     },
   ],
   market: { tam: "$4.2B", sam: "$610M", som: "$18M" },
@@ -64,7 +64,7 @@ const SAMPLE: Report = {
     { severity: "MED", text: "Per-seat pricing vs. studio demand" },
   ],
   nextStep: {
-    headline: "PIVOT \u00b7 RUN $2K PROTOTYPE COHORT",
+    headline: "PIVOT · RUN $2K PROTOTYPE COHORT",
     rationale:
       "Demand is proven but the moat is thin. Validate retention against the two mid-market competitors before committing to a full build.",
   },
@@ -119,7 +119,7 @@ function Console() {
       <section className="border-b border-line bg-gradient-to-b from-panel2 to-panel px-5 py-6">
         <div className="mx-auto max-w-[1240px]">
           <h1 className="font-mono text-[11px] uppercase tracking-[0.3em] text-signal">
-            Test Chamber \u00b7 Substrate Input
+            Test Chamber · Substrate Input
           </h1>
           <form
             className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center"
@@ -145,12 +145,12 @@ function Console() {
               disabled={running || idea.trim().length < 8}
               className="rounded-md bg-signal px-6 py-3.5 font-mono text-sm font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-signal/85 disabled:opacity-40"
             >
-              {running ? "Running\u2026" : "Run Validation"}
+              {running ? "Running…" : "Run Validation"}
             </button>
           </form>
           {mutation.isError && (
             <p className="mt-3 font-mono text-[11px] uppercase tracking-widest text-heat">
-              Simulation failed \u2014 {(mutation.error as Error).message}
+              Simulation failed — {(mutation.error as Error).message}
             </p>
           )}
           {!mutation.data && !running && !mutation.isError && (
@@ -170,7 +170,7 @@ function Console() {
               <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-fog">
                 Viability Index
               </span>
-              <span className="font-mono text-[11px] text-signal">GAUGE\u00b7A</span>
+              <span className="font-mono text-[11px] text-signal">GAUGE·A</span>
             </div>
             <div className="relative mx-auto mt-4 size-[180px]">
               <div className="absolute inset-0 rounded-full border border-line/60" />
@@ -257,14 +257,14 @@ function Console() {
                 >
                   <div className="flex items-center justify-between font-mono text-[11px]">
                     <span className="text-bright">
-                      P-0{i + 1} \u00b7 {p.name}
+                      P-0{i + 1} · {p.name}
                     </span>
                     <span className={sentimentColor(p.sentiment)}>
                       {p.sentiment >= 0 ? "+" : ""}
                       {p.sentiment.toFixed(2)}
                     </span>
                   </div>
-                  <p className="mt-2 text-sm leading-snug text-fog">\u201c{p.quote}\u201d</p>
+                  <p className="mt-2 text-sm leading-snug text-fog">“{p.quote}”</p>
                 </div>
               ))}
             </div>
@@ -336,7 +336,7 @@ function Console() {
                       >
                         {r.severity}
                       </span>{" "}
-                      \u00b7 {r.text}
+                      · {r.text}
                     </div>
                   </div>
                 ))}
@@ -379,8 +379,8 @@ function Console() {
 
       <footer className="border-t border-line px-5 py-4">
         <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-fog">
-          <span>STRATA \u00b7 Validation Console v2.4</span>
-          <span>Simulation \u2014 not a substitute for live market data</span>
+          <span>STRATA · Validation Console v2.4</span>
+          <span>Simulation — not a substitute for live market data</span>
           <span>Session 0x7F3A</span>
         </div>
       </footer>
