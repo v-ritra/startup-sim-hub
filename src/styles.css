@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * STRATA — Validation Console design system.
- * Mission-control instrument palette. All colors in oklch.
+ * LaunchPad AI — Warm minimalist canvas.
+ * Encouraging, humble, clear-eyed judgment. All colors in oklch.
  */
 
 @theme inline {
@@ -15,20 +15,25 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --font-display: "Space Grotesk", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
-  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-display: "Archivo Black", system-ui, sans-serif;
+  --font-sans: "Hind", system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
 
-  /* instrument palette */
+  /* canvas palette */
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-soft: var(--surface-soft);
+  --color-hairline: var(--hairline);
   --color-ink: var(--ink);
-  --color-panel: var(--panel);
-  --color-panel2: var(--panel2);
-  --color-line: var(--line);
-  --color-signal: var(--signal);
-  --color-heat: var(--heat);
-  --color-cool: var(--cool);
-  --color-fog: var(--fog);
-  --color-bright: var(--bright);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-contrast: var(--contrast);
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
 
   /* semantic shadcn mapping */
   --color-background: var(--background);
@@ -51,58 +56,58 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
-  --color-chart-1: var(--signal);
-  --color-chart-2: var(--cool);
-  --color-chart-3: var(--heat);
-  --color-chart-4: var(--fog);
-  --color-chart-5: var(--bright);
-  --color-sidebar: var(--panel);
-  --color-sidebar-foreground: var(--bright);
-  --color-sidebar-primary: var(--signal);
-  --color-sidebar-primary-foreground: var(--ink);
-  --color-sidebar-accent: var(--panel2);
-  --color-sidebar-accent-foreground: var(--bright);
-  --color-sidebar-border: var(--line);
-  --color-sidebar-ring: var(--signal);
+  --color-chart-1: var(--good);
+  --color-chart-2: var(--warn);
+  --color-chart-3: var(--bad);
+  --color-chart-4: var(--ink-faint);
+  --color-chart-5: var(--contrast);
+  --color-sidebar: var(--surface);
+  --color-sidebar-foreground: var(--ink);
+  --color-sidebar-primary: var(--contrast);
+  --color-sidebar-primary-foreground: var(--canvas);
+  --color-sidebar-accent: var(--surface-soft);
+  --color-sidebar-accent-foreground: var(--ink);
+  --color-sidebar-border: var(--hairline);
+  --color-sidebar-ring: var(--good);
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 
-  --ink: oklch(0.163 0.009 262);
-  --panel: oklch(0.205 0.011 262);
-  --panel2: oklch(0.247 0.015 262);
-  --line: oklch(0.312 0.018 262);
-  --signal: oklch(0.783 0.152 72);
-  --heat: oklch(0.678 0.199 32);
-  --cool: oklch(0.733 0.109 172);
-  --fog: oklch(0.714 0.017 258);
-  --bright: oklch(0.951 0.004 262);
+  --canvas: oklch(0.989 0.003 75);
+  --surface: oklch(1 0 0);
+  --surface-soft: oklch(0.973 0.004 80);
+  --hairline: oklch(0.925 0.004 80);
+  --ink: oklch(0.268 0.006 60);
+  --ink-soft: oklch(0.523 0.008 70);
+  --ink-faint: oklch(0.709 0.008 75);
+  --contrast: oklch(0.243 0.006 60);
+  --good: oklch(0.678 0.146 162);
+  --good-soft: oklch(0.958 0.031 162);
+  --warn: oklch(0.769 0.155 70);
+  --warn-soft: oklch(0.962 0.045 84);
+  --bad: oklch(0.633 0.198 22);
+  --bad-soft: oklch(0.951 0.028 18);
 
-  --background: var(--ink);
-  --foreground: var(--bright);
-  --card: var(--panel);
-  --card-foreground: var(--bright);
-  --popover: var(--panel2);
-  --popover-foreground: var(--bright);
-  --primary: var(--signal);
-  --primary-foreground: var(--ink);
-  --secondary: var(--panel2);
-  --secondary-foreground: var(--bright);
-  --muted: var(--panel2);
-  --muted-foreground: var(--fog);
-  --accent: var(--cool);
-  --accent-foreground: var(--ink);
-  --destructive: var(--heat);
-  --destructive-foreground: var(--ink);
-  --border: var(--line);
-  --input: var(--line);
-  --ring: var(--signal);
-}
-
-.dark {
-  --background: var(--ink);
-  --foreground: var(--bright);
+  --background: var(--canvas);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--contrast);
+  --primary-foreground: var(--canvas);
+  --secondary: var(--surface-soft);
+  --secondary-foreground: var(--ink);
+  --muted: var(--surface-soft);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--good);
+  --accent-foreground: var(--canvas);
+  --destructive: var(--bad);
+  --destructive-foreground: var(--canvas);
+  --border: var(--hairline);
+  --input: var(--hairline);
+  --ring: var(--good);
 }
 
 @layer base {
@@ -113,12 +118,12 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
 
   ::selection {
-    background-color: var(--signal);
+    background-color: var(--good-soft);
     color: var(--ink);
   }
 }
@@ -142,20 +147,20 @@
 
 @keyframes draw {
   from {
-    stroke-dashoffset: 214;
-  }
-}
-
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.25;
+    stroke-dashoffset: 364.4;
   }
 }
 
 @utility rise {
-  animation: rise 0.5s cubic-bezier(0.32, 0.72, 0, 1) both;
+  animation: rise 0.55s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+@utility lift {
+  transition:
+    transform 0.25s cubic-bezier(0.32, 0.72, 0, 1),
+    box-shadow 0.25s ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px -18px oklch(0.268 0.006 60 / 0.45);
+  }
 }
