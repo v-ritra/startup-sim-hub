@@ -7,17 +7,17 @@ import { runValidation, type Report } from "@/lib/validate.functions";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "STRATA — AI Market Validation Console for Founders" },
+      { title: "LaunchPad AI — Validate a Business Idea Before You Build" },
       {
         name: "description",
         content:
-          "Stress-test a startup idea with AI simulations: viability index, persona reactions, market sizing, competitor threat and a go / no-go verdict.",
+          "Stress-test a startup idea with AI: viability score, customer reactions, market size, competitors, risks and a clear next step.",
       },
-      { property: "og:title", content: "STRATA — AI Market Validation Console" },
+      { property: "og:title", content: "LaunchPad AI — Validate a Business Idea" },
       {
         property: "og:description",
         content:
-          "Run your business idea through an AI wind tunnel before you spend a dollar. Viability score, personas, risks, verdict.",
+          "Honest, encouraging AI validation for early-stage founders. Score, personas, market, risks and next step in seconds.",
       },
     ],
   }),
@@ -64,16 +64,44 @@ const SAMPLE: Report = {
     { severity: "MED", text: "Per-seat pricing vs. studio demand" },
   ],
   nextStep: {
-    headline: "PIVOT · RUN $2K PROTOTYPE COHORT",
+    headline: "Run a $2K prototype cohort before building",
     rationale:
       "Demand is proven but the moat is thin. Validate retention against the two mid-market competitors before committing to a full build.",
   },
 };
 
-function sentimentColor(v: number) {
-  if (v >= 0.5) return "text-cool";
-  if (v >= 0) return "text-signal";
-  return "text-heat";
+function band(score: number) {
+  if (score >= 70) return { label: "Strong", tone: "good" as const };
+  if (score >= 45) return { label: "Mixed", tone: "warn" as const };
+  return { label: "Weak", tone: "bad" as const };
+}
+
+const barTone = {
+  good: "bg-good",
+  warn: "bg-warn",
+  bad: "bg-bad",
+};
+
+function Pillar({ title, score, delay }: { title: string; score: number; delay: string }) {
+  const b = band(score);
+  return (
+    <div
+      className="rise lift rounded-2xl border border-hairline bg-surface p-6 shadow-sm"
+      style={{ animationDelay: delay }}
+    >
+      <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink-faint">{title}</h4>
+      <div className="mt-4 flex items-baseline justify-between">
+        <span className="font-display text-2xl text-ink">{b.label}</span>
+        <span className="text-sm font-semibold text-ink-soft">{score}</span>
+      </div>
+      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-surface-soft">
+        <div
+          className={`h-full ${barTone[b.tone]}`}
+          style={{ width: `${score}%`, animation: "fill 1s cubic-bezier(0.32,0.72,0,1) 0.2s both" }}
+        />
+      </div>
+    </div>
+  );
 }
 
 function Console() {
@@ -86,304 +114,269 @@ function Console() {
 
   const report: Report = mutation.data ?? SAMPLE;
   const running = mutation.isPending;
-  const dash = 214;
-  const offset = dash - (dash * report.viability) / 100;
+  const b = band(report.viability);
+  const CIRC = 364.4;
+  const offset = CIRC - (CIRC * report.viability) / 100;
+
+  const ringColor = { good: "text-good", warn: "text-warn", bad: "text-bad" }[b.tone];
+  const pillTone = {
+    good: "bg-good-soft text-good",
+    warn: "bg-warn-soft text-warn",
+    bad: "bg-bad-soft text-bad",
+  }[b.tone];
 
   return (
-    <div className="min-h-screen bg-ink text-bright font-display antialiased">
-      <header className="flex items-center justify-between gap-4 border-b border-line bg-panel/70 px-5 py-3">
-        <div className="flex items-center gap-3">
-          <div className="grid size-8 place-items-center rounded-[5px] border border-signal/50 font-mono text-sm text-signal">
-            S
-          </div>
-          <div className="leading-none">
-            <div className="text-sm font-semibold tracking-wide">STRATA</div>
-            <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.25em] text-fog">
-              Validation Console
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-5 font-mono text-[11px] text-fog">
-          <span className="hidden sm:inline">GRID&nbsp;04</span>
-          <span className="hidden md:inline">LAT&nbsp;40.71 / LON&nbsp;-74.00</span>
-          <span className="flex items-center gap-2 text-cool">
-            <span
-              className="size-1.5 rounded-full bg-cool"
-              style={{ animation: "blink 1.6s linear infinite" }}
-            />
-            {running ? "SIMULATING" : "TELEMETRY LIVE"}
-          </span>
-        </div>
-      </header>
-
-      <section className="border-b border-line bg-gradient-to-b from-panel2 to-panel px-5 py-6">
-        <div className="mx-auto max-w-[1240px]">
-          <h1 className="font-mono text-[11px] uppercase tracking-[0.3em] text-signal">
-            Test Chamber · Substrate Input
-          </h1>
-          <form
-            className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (idea.trim().length >= 8) mutation.mutate(idea.trim());
-            }}
+    <div className="min-h-screen bg-canvas px-6 py-10 text-ink antialiased lg:px-8">
+      <div className="mx-auto w-full max-w-5xl">
+        {/* Idea input */}
+        <form
+          className="rise mb-10 rounded-3xl border border-hairline bg-surface p-6 shadow-sm"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (idea.trim().length >= 8) mutation.mutate(idea.trim());
+          }}
+        >
+          <label
+            htmlFor="idea"
+            className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink-faint"
           >
-            <div className="flex flex-1 items-center gap-3 rounded-md border border-line bg-ink px-4 py-3.5 focus-within:border-signal/60">
-              <span className="font-mono text-sm text-signal">&gt;</span>
-              <input
-                value={idea}
-                onChange={(e) => setIdea(e.target.value)}
-                placeholder="AI copilot subscription for freelance designers, sold per-seat"
-                className="flex-1 bg-transparent font-mono text-sm text-bright outline-none placeholder:text-fog/60"
-              />
-              <span className="hidden font-mono text-[10px] uppercase tracking-widest text-fog sm:inline">
-                SUBSTRATE_04
-              </span>
-            </div>
+            Your business idea
+          </label>
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+            <input
+              id="idea"
+              value={idea}
+              onChange={(e) => setIdea(e.target.value)}
+              placeholder="A subscription that delivers fresh dog food to city apartments"
+              className="flex-1 rounded-xl border border-hairline bg-canvas px-4 py-3 text-base text-ink outline-none placeholder:text-ink-faint focus:border-ink-soft"
+            />
             <button
               type="submit"
               disabled={running || idea.trim().length < 8}
-              className="rounded-md bg-signal px-6 py-3.5 font-mono text-sm font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-signal/85 disabled:opacity-40"
+              className="rounded-xl bg-contrast px-7 py-3 font-semibold text-canvas transition-opacity hover:opacity-90 disabled:opacity-35"
             >
-              {running ? "Running…" : "Run Validation"}
+              {running ? "Validating…" : "Validate idea"}
             </button>
-          </form>
+          </div>
           {mutation.isError && (
-            <p className="mt-3 font-mono text-[11px] uppercase tracking-widest text-heat">
-              Simulation failed — {(mutation.error as Error).message}
+            <p className="mt-3 text-sm text-bad">
+              Something went wrong — {(mutation.error as Error).message}
             </p>
           )}
           {!mutation.data && !running && !mutation.isError && (
-            <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-fog">
-              Showing reference run. Enter your own idea to simulate.
+            <p className="mt-3 text-sm text-ink-faint">
+              Showing an example report. Enter your own idea to run a fresh one.
             </p>
           )}
-        </div>
-      </section>
+        </form>
 
-      <main
-        className={`mx-auto max-w-[1240px] px-5 py-6 transition-opacity ${running ? "opacity-40" : ""}`}
-      >
-        <div className="grid grid-cols-12 gap-4">
-          <div className="rise col-span-12 rounded-lg border border-line bg-panel p-5 lg:col-span-4">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-fog">
-                Viability Index
+        <div className={running ? "opacity-40 transition-opacity" : "transition-opacity"}>
+          {/* Header & export */}
+          <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink-faint">
+                Original concept
               </span>
-              <span className="font-mono text-[11px] text-signal">GAUGE·A</span>
+              <h1 className="mt-1 max-w-2xl font-display text-2xl leading-tight text-ink">
+                {report.substrate}
+              </h1>
             </div>
-            <div className="relative mx-auto mt-4 size-[180px]">
-              <div className="absolute inset-0 rounded-full border border-line/60" />
-              <svg viewBox="0 0 80 80" className="h-full w-full -rotate-90">
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="34"
-                  fill="none"
-                  stroke="var(--line)"
-                  strokeWidth="6"
-                  pathLength={dash}
-                />
-                <circle
-                  key={report.viability}
-                  cx="40"
-                  cy="40"
-                  r="34"
-                  fill="none"
-                  stroke="var(--signal)"
-                  strokeWidth="6"
+            <button
+              onClick={() => {
+                const blob = new Blob([JSON.stringify(report, null, 2)], {
+                  type: "application/json",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "launchpad-validation-report.json";
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              className="flex items-center gap-2 rounded-lg border border-hairline px-4 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-surface-soft"
+            >
+              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
                   strokeLinecap="round"
-                  pathLength={dash}
-                  style={{
-                    strokeDasharray: dash,
-                    strokeDashoffset: offset,
-                    animation: "draw 1.4s cubic-bezier(0.32,0.72,0,1) 0.2s both",
-                  }}
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                 />
               </svg>
-              <div className="absolute inset-0 grid place-items-center">
-                <div className="text-center">
-                  <div className="font-mono text-5xl font-semibold text-bright">
-                    {report.viability}
+              Export report
+            </button>
+          </div>
+
+          {/* Hero score & next step */}
+          <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div className="rise rounded-3xl border border-hairline bg-surface p-8 shadow-sm md:col-span-2">
+              <div className="flex flex-col items-center gap-8 sm:flex-row">
+                <div className="relative shrink-0">
+                  <svg className="size-32 -rotate-90">
+                    <circle
+                      cx="64"
+                      cy="64"
+                      r="58"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      fill="transparent"
+                      className="text-surface-soft"
+                    />
+                    <circle
+                      key={report.viability}
+                      cx="64"
+                      cy="64"
+                      r="58"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      strokeLinecap="round"
+                      fill="transparent"
+                      strokeDasharray={CIRC}
+                      strokeDashoffset={offset}
+                      className={ringColor}
+                      style={{ animation: "draw 1.3s cubic-bezier(0.32,0.72,0,1) 0.2s both" }}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="font-display text-3xl text-ink">{report.viability}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-tight text-ink-faint">
+                      Score
+                    </span>
                   </div>
-                  <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-fog">
-                    / 100
+                </div>
+                <div>
+                  <div
+                    className={`mb-2 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${pillTone}`}
+                  >
+                    {report.verdictLabel}
                   </div>
+                  <p className="text-lg font-medium leading-snug text-ink-soft">
+                    {report.nextStep.rationale}
+                  </p>
                 </div>
               </div>
             </div>
-            <div className="mt-4 flex items-center justify-between rounded-md border border-signal/40 bg-signal/10 px-3 py-2">
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-fog">
-                Verdict
-              </span>
-              <span className="font-mono text-sm font-semibold text-signal">
-                {report.verdictLabel}
-              </span>
-            </div>
-            <div className="mt-3 grid grid-cols-3 gap-2 font-mono text-[10px]">
-              <div className="rounded border border-line bg-panel2 px-2 py-1.5">
-                <div className="text-fog">DEMAND</div>
-                <div className="mt-0.5 text-sm text-cool">{report.demand}</div>
-              </div>
-              <div className="rounded border border-line bg-panel2 px-2 py-1.5">
-                <div className="text-fog">MARGIN</div>
-                <div className="mt-0.5 text-sm text-signal">{report.margin}</div>
-              </div>
-              <div className="rounded border border-line bg-panel2 px-2 py-1.5">
-                <div className="text-fog">MOAT</div>
-                <div className="mt-0.5 text-sm text-heat">{report.moat}</div>
-              </div>
-            </div>
-          </div>
 
-          <div
-            className="rise col-span-12 rounded-lg border border-line bg-panel p-5 lg:col-span-5"
-            style={{ animationDelay: "0.08s" }}
-          >
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-fog">
-                Persona Wind Tunnel
-              </span>
-              <span className="font-mono text-[11px] text-fog">
-                {report.personas.length} SUBJECTS
-              </span>
-            </div>
-            <div className="mt-4 space-y-3">
-              {report.personas.map((p, i) => (
-                <div
-                  key={p.name + i}
-                  className="rise rounded-md border border-line bg-panel2 p-3"
-                  style={{ animationDelay: `${0.18 + i * 0.08}s` }}
-                >
-                  <div className="flex items-center justify-between font-mono text-[11px]">
-                    <span className="text-bright">
-                      P-0{i + 1} · {p.name}
-                    </span>
-                    <span className={sentimentColor(p.sentiment)}>
-                      {p.sentiment >= 0 ? "+" : ""}
-                      {p.sentiment.toFixed(2)}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm leading-snug text-fog">“{p.quote}”</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="col-span-12 flex flex-col gap-4 lg:col-span-3">
             <div
-              className="rise rounded-lg border border-line bg-panel p-5"
-              style={{ animationDelay: "0.14s" }}
+              className="rise flex flex-col justify-between rounded-3xl bg-contrast p-8 text-canvas"
+              style={{ animationDelay: "0.06s" }}
             >
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-fog">
-                  Market / Competitors
+              <div>
+                <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-canvas/60">
+                  Next step
+                </h3>
+                <p className="font-display text-xl leading-snug">{report.nextStep.headline}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Pillars */}
+          <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+            <Pillar title="Market demand" score={report.demand} delay="0.1s" />
+            <Pillar title="Profit margin" score={report.margin} delay="0.16s" />
+            <Pillar title="Defensibility" score={report.moat} delay="0.22s" />
+          </div>
+
+          {/* Personas */}
+          <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+            {report.personas.map((p, i) => (
+              <div
+                key={p.name + i}
+                className="rise rounded-2xl border border-hairline/70 bg-surface-soft p-6"
+                style={{ animationDelay: `${0.26 + i * 0.06}s` }}
+              >
+                <div className="mb-4 flex items-center gap-3">
+                  <div
+                    className={`size-8 shrink-0 rounded-full ${p.sentiment >= 0.5 ? "bg-good" : p.sentiment >= 0 ? "bg-warn" : "bg-bad"} opacity-70`}
+                  />
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-bold text-ink">{p.name}</div>
+                    <div className="truncate text-xs text-ink-faint">{p.archetype}</div>
+                  </div>
+                </div>
+                <p className="text-sm italic leading-relaxed text-ink-soft">“{p.quote}”</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Market & risks */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div
+              className="rise rounded-2xl border border-hairline bg-surface p-8 shadow-sm"
+              style={{ animationDelay: "0.44s" }}
+            >
+              <h4 className="mb-6 font-display text-sm text-ink">Market context</h4>
+              <div className="space-y-3">
+                {(
+                  [
+                    ["Total addressable market", report.market.tam],
+                    ["Serviceable market", report.market.sam],
+                    ["Realistic first slice", report.market.som],
+                  ] as const
+                ).map(([label, value]) => (
+                  <div
+                    key={label}
+                    className="flex items-center justify-between border-b border-hairline pb-2 text-sm"
+                  >
+                    <span className="text-ink-soft">{label}</span>
+                    <span className="font-bold text-ink">{value}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="pt-6">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink-faint">
+                  Key competitors
                 </span>
-                <span className="font-mono text-[11px] text-fog">{report.competitors.length}</span>
+                <div className="mt-3 space-y-2">
+                  {report.competitors.map((c, i) => (
+                    <div key={c.name + i} className="flex items-center gap-3 text-sm">
+                      <span className="flex-1 text-ink-soft">{c.name}</span>
+                      <div className="h-1.5 w-24 overflow-hidden rounded-full bg-surface-soft">
+                        <div
+                          className="h-full bg-ink/70"
+                          style={{
+                            width: `${Math.round(c.threat * 100)}%`,
+                            animation: `fill 1s cubic-bezier(0.32,0.72,0,1) ${0.3 + i * 0.07}s both`,
+                          }}
+                        />
+                      </div>
+                      <span className="w-8 text-right text-xs text-ink-faint">
+                        {Math.round(c.threat * 100)}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="mt-3 font-mono text-[11px]">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-fog">TAM</span>
-                  <span className="text-bright">{report.market.tam}</span>
-                </div>
-                <div className="mt-1 flex items-baseline justify-between">
-                  <span className="text-fog">SAM</span>
-                  <span className="text-bright">{report.market.sam}</span>
-                </div>
-                <div className="mt-1 flex items-baseline justify-between">
-                  <span className="text-fog">SOM</span>
-                  <span className="text-signal">{report.market.som}</span>
-                </div>
-              </div>
-              <div className="mt-4 space-y-2 font-mono text-[11px]">
-                {report.competitors.map((c, i) => (
-                  <div key={c.name + i} className="flex items-center gap-2">
-                    <span className="w-20 truncate text-fog">{c.name}</span>
-                    <div className="h-1.5 flex-1 overflow-hidden rounded bg-line">
+            </div>
+
+            <div
+              className="rise rounded-2xl border border-hairline bg-surface p-8 shadow-sm"
+              style={{ animationDelay: "0.5s" }}
+            >
+              <h4 className="mb-6 font-display text-sm text-ink">Critical risks</h4>
+              <ul className="space-y-3">
+                {report.risks.map((r, i) => (
+                  <li key={r.text + i} className="flex items-start gap-3">
+                    <div
+                      className={`grid size-5 shrink-0 place-items-center rounded ${r.severity === "HIGH" ? "bg-bad-soft" : r.severity === "MED" ? "bg-warn-soft" : "bg-good-soft"}`}
+                    >
                       <div
-                        className="h-full bg-bright/70"
-                        style={{
-                          width: `${Math.round(c.threat * 100)}%`,
-                          animation: `fill 1s cubic-bezier(0.32,0.72,0,1) ${0.3 + i * 0.08}s both`,
-                        }}
+                        className={`size-2 rounded-full ${r.severity === "HIGH" ? "bg-bad" : r.severity === "MED" ? "bg-warn" : "bg-good"}`}
                       />
                     </div>
-                    <span className="w-7 text-right text-fog">{c.threat.toFixed(2)}</span>
-                  </div>
+                    <span className="text-sm leading-snug text-ink-soft">{r.text}</span>
+                  </li>
                 ))}
-              </div>
-            </div>
-
-            <div
-              className="rise flex-1 rounded-lg border border-line bg-panel p-5"
-              style={{ animationDelay: "0.2s" }}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-fog">
-                  Risk Flags
-                </span>
-                <span className="font-mono text-[11px] text-heat">{report.risks.length}</span>
-              </div>
-              <div className="mt-3 space-y-2.5">
-                {report.risks.map((r, i) => (
-                  <div key={r.text + i} className="flex gap-2.5">
-                    <span
-                      className={`mt-1 size-2 shrink-0 rounded-full ${r.severity === "HIGH" ? "bg-heat" : r.severity === "MED" ? "bg-signal" : "bg-cool"}`}
-                    />
-                    <div className="text-xs leading-snug text-fog">
-                      <span
-                        className={`font-mono text-[10px] uppercase ${r.severity === "HIGH" ? "text-heat" : r.severity === "MED" ? "text-signal" : "text-cool"}`}
-                      >
-                        {r.severity}
-                      </span>{" "}
-                      · {r.text}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              </ul>
             </div>
           </div>
-        </div>
 
-        <div
-          className="rise mt-4 flex flex-col gap-4 rounded-lg border border-line bg-panel2 px-5 py-4 sm:flex-row sm:items-center"
-          style={{ animationDelay: "0.28s" }}
-        >
-          <div className="shrink-0">
-            <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-fog">
-              Next-Step Verdict
-            </div>
-            <div className="mt-1 font-mono text-lg font-semibold text-signal">
-              {report.nextStep.headline}
-            </div>
-          </div>
-          <p className="text-sm leading-snug text-fog">{report.nextStep.rationale}</p>
-          <button
-            onClick={() => {
-              const blob = new Blob([JSON.stringify(report, null, 2)], {
-                type: "application/json",
-              });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = "strata-validation-report.json";
-              a.click();
-              URL.revokeObjectURL(url);
-            }}
-            className="shrink-0 rounded-md border border-signal/50 px-5 py-2.5 font-mono text-xs font-semibold uppercase tracking-wider text-signal transition-colors hover:bg-signal hover:text-ink"
-          >
-            Export Report
-          </button>
+          <p className="mt-10 text-center text-xs text-ink-faint">
+            LaunchPad AI simulations are a starting point, not a substitute for talking to real
+            customers.
+          </p>
         </div>
-      </main>
-
-      <footer className="border-t border-line px-5 py-4">
-        <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-fog">
-          <span>STRATA · Validation Console v2.4</span>
-          <span>Simulation — not a substitute for live market data</span>
-          <span>Session 0x7F3A</span>
-        </div>
-      </footer>
+      </div>
     </div>
   );
 }
