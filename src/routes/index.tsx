@@ -298,7 +298,7 @@ function Console() {
               <div className="mt-4 space-y-2 font-mono text-[11px]">
                 {report.competitors.map((c, i) => (
                   <div key={c.name + i} className="flex items-center gap-2">
-                    <span className="w-12 truncate text-fog">{c.name}</span>
+                    <span className="w-20 truncate text-fog">{c.name}</span>
                     <div className="h-1.5 flex-1 overflow-hidden rounded bg-line">
                       <div
                         className="h-full bg-bright/70"
